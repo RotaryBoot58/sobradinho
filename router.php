@@ -6,30 +6,30 @@ $method = strtoupper($_SERVER['REQUEST_METHOD']);
 
 // This routes URI should be in portuguese for readability sake
 $get_routes = [
-    '' => '../views/home.php',
+	'' => '../views/home.php',
 ];
 
 $post_routes = [];
 
 $routes = match($method)
 {
-    'GET' => $get_routes,
-    'POST' => $post_routes,
-    default => abort(405, 'Request method is not supported')
+	'GET' => $get_routes,
+	'POST' => $post_routes,
+	default => abort(405, 'Request method is not supported')
 };
 
 foreach($routes as $route => $action)
 {
-    if($route === $uri)
-    {
-        return require $action;
-    }
+	if($route === $uri)
+	{
+		return require $action;
+	}
 }
 
 abort(404, 'Page not found');
 
 function abort(int $code, string $message)
 {
-    http_response_code($code);
-    exit($message);
+	http_response_code($code);
+	exit($message);
 }
