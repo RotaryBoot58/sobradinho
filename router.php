@@ -9,7 +9,9 @@ $get_routes = [
 	'' => '../views/home.php',
 ];
 
-$post_routes = [];
+$post_routes = [
+	'service/create' => '../controllers/service/create.php',
+];
 
 $routes = match($method)
 {
