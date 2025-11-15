@@ -4,8 +4,8 @@ require_once module('database');
 
 abstract class Model
 {
-	private Database $database;
-	private string $table_name;
+	protected Database $database;
+	protected string $table_name;
 
 	public function __construct(string $table_name)
 	{
