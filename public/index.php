@@ -4,17 +4,17 @@ require '../router.php';
 
 function module(string $module): string
 {
-    return "../{$module}.php";
+	return "../{$module}.php";
 }
 
 function model(string $model): string
 {
-    return "../models/{$model}.php";
+	return "../models/{$model}.php";
 }
 
 function component(string $component): string
 {
-    return "../views/components/{$component}.php";
+	return "../views/components/{$component}.php";
 }
 
 function redirect(string $route)
@@ -25,10 +25,10 @@ function redirect(string $route)
 
 function printr(...$array)
 {
-    echo "<pre>";
-    foreach($array as $arra)
-    {
-    	print_r($array);
-    }
-    echo "</pre>";
+	echo "<pre>";
+	foreach($array as $item)
+	{
+		print_r($item);
+	}
+	echo "</pre>";
 }
