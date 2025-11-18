@@ -1,19 +1,10 @@
 <?php
 
-// $dataInicio = new DateTime("2024-01-01");
-// $dataFim = new DateTime("2024-03-31");
-// 
-// $filtrados = array_filter($clientes, function ($cliente) use ($dataInicio, $dataFim) {
-//     $dataCliente = new DateTime($cliente["data"]);
-//     return $dataCliente >= $dataInicio && $dataCliente <= $dataFim;
-// });
-// 
-// print_r($filtrados);
-
+session_start();
 require_once model('service');
 
 $service_model = new Service;
-
+$servicesAll = $service_model->index();
 $summary = [
 	'router_comprados' => 0,
 	'router_reutilizados' => 0,
@@ -24,7 +15,16 @@ $summary = [
 	'cable' => 0,
 ];
 
-$services = $service_model->index();
+$services = [];
+foreach($servicesAll as $service)
+{
+	if($service['creation_date'] >= date("1.n.Y") && $service['creation_date'] <= date("t.n.Y"))
+	{
+		$services[] = $service;
+	}
+}
+unset($service);
+
 foreach($services as $service)
 {
 	// Roteadores
@@ -93,22 +93,24 @@ foreach($services as $service)
 				
 				<label>
 					Código:
-					<input type="number" name="code">
+					<input type="number" name="code" required  autocomplete="off">
 				</label>
 
 				<label>
 					Tipo:
-					<input type="text" name="type">
+					<select name="type" required>
+						<option value="">Selecionar tipo</option>
+						<option value="Instalação">Instalação</option>
+						<option value="Manutenção">Manutenção</option>
+						<option value="Retirada">Retirada</option>
+						<option value="Upgrade">Upgrade</option>
+						<option value="Troca de endereço">Troca de endereço</option>
+					</select>
 				</label>
 
 				<label>
 					Técnico:
-					<input type="text" name="technic">
-				</label>
-
-				<label>
-					Cabo:
-					<input type="number" name="cable">
+					<input type="text" name="technic" required  autocomplete="off">
 				</label>
 			</fieldset>
 
@@ -116,34 +118,47 @@ foreach($services as $service)
 				<legend>ONU</legend>
 
 				<label>
-					ONU:
-					<input type="text" name="onu">
+					Modelo:
+					<input type="text" name="onu" autocomplete="off">
 				</label>
 
 				<label>
 					Uso:
-					<input type="text" name="onu_usage">
+					<select name="onu_usage">
+						<option value="">Selecionar uso</option>
+						<option value="Comprado">Comprado</option>
+						<option value="Utilizado">Retirado</option>
+						<option value="Reutilizado">Reutilizado</option>
+					</select>
 				</label>
 			</fieldset>
 
-
-			<fieldset id="a2">
+			<fieldset>
 				<legend>Roteador</legend>
 
 				<label>
-					Roteador:
-					<input type="text" name="router">
+					Modelo:
+					<input type="text" name="router" autocomplete="off">
 				</label>
 
 				<label>
 					Uso:
-					<input type="text" name="router_usage">
+					<select name="router_usage">
+						<option value="">Selecionar uso</option>
+						<option value="Comprado">Comprado</option>
+						<option value="Utilizado">Retirado</option>
+						<option value="Reutilizado">Reutilizado</option>
+					</select>
 				</label>
 			</fieldset>
 
 			<button type="submit">Criar</button>
 		</form>
 
+		<section id="error-box">
+			<?php printr($_SESSION['services-create_errors']); session_destroy(); ?>
+		</section>
+		
 		<h1>Resumo de estoque</h1>
 
 		<h2>Total</h2>
