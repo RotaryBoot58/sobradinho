@@ -6,22 +6,49 @@ if(!$_POST)
 }
 
 require_once model('service');
+$service_model = new Service;
 
-$service = new Service;
+// Validation
+require_once module('validator');
 
-// $_POST = [
-// 	'code' => '54678'
-// 	'type' => 'instalacao',
-// 	'technic' => 'marcelo',
-// 	'onu' => null,
-// 	'onu_usage' => null,
-// 	'router' => 'G5',
-// 	'router_usage' => 'reutilizado',
-// 	'cable' => 67,
-// 	'creation_date' => date('d-m-Y'),
-// 	'creation_time' => date('H:i'),
-// 	'update_date' => date('d-m-Y'),
-// 	'update_time' => date('H:i')
-// ];
+if(!$_POST['onu'] || !$_POST['onu_usage'])
+{
+	$_POST['onu'] = null;
+	$_POST['onu_usage'] = null;
+}
 
-$service->create($_POST);
+if(!$_POST['router'] || !$_POST['router_usage'])
+{
+	$_POST['router'] = null;
+	$_POST['router_usage'] = null;
+}
+
+$rules = [
+	'type' => ['required', 'text', 'in_array:service-type'],
+	'code' => ['required'],
+	'technic' => ['required'],
+	'onu' => ['alpha_numerical'],
+	'onu_usage' => ['alpha_numerical'],
+	'router' => ['alpha_numerical'],
+	'router_usage' => ['alpha_numerical'],
+	'cable' => ['number']
+];
+
+$validator = new Validator($_POST, $rules);
+
+if(!$validator->validate())
+{
+	session_start();
+	$_SESSION['services-create_errors'] = $validator->errors;
+	printr($validator->errors);
+	redirect('');
+}
+
+$data = $_POST;
+$data['creation_date'] = date('j.n.Y');
+$data['creation_time'] = date('H:i');
+$data['update_date'] = date('j.n.Y');
+$data['update_time'] = date('H:i');
+
+$service_model->create($data);
+redirect(''); 
