@@ -4,21 +4,28 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = trim($uri, '/');
 $method = strtoupper($_SERVER['REQUEST_METHOD']);
 
-// This routes URI should be in portuguese for readability sake
+// Routes URI should be in portuguese for readability sake
 $get_routes = [
-	'' => '../views/home.php',
+	'' => '../controllers/home.php',
 ];
 
 $post_routes = [
 	'service/create' => '../controllers/service/create.php',
 ];
 
-$routes = match($method)
+switch($method)
 {
-	'GET' => $get_routes,
-	'POST' => $post_routes,
-	default => abort(405, 'Request method is not supported')
-};
+	case 'GET':
+		$routes = $get_routes;
+		break;
+
+	case 'POST':
+		$routes = $post_routes;
+		break;
+
+	default:
+		abort(405, 'Request method is not supported');
+}
 
 foreach($routes as $route => $action)
 {
