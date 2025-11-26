@@ -86,56 +86,25 @@
 		
 		<h1>Resumo de estoque</h1>
 
-		<h2>Total</h2>
 		<table>
 			<thead>
 				<tr>
-					<th>Roteadores e ONUs comprados</th>
-					<th>Roteadores e ONUs reutilizados</th>
-					<th>Roteadores e ONUs retirados</th>
+					<th scope="col"></th>
+					<th scope="col">Comprados</th>
+					<th scope="col">Utilizados</th>
+					<th scope="col">Reutilizados</th>
 				</tr>
 			</thead>
 
 			<tbody>
 				<tr>
-					<td><?= $summary['router_comprados'] + $summary['onu_comprados'] ?></td>
-					<td><?= $summary['router_reutilizados'] + $summary['onu_reutilizados'] ?></td>
-					<td><?= $summary['router_retirados'] + $summary['onu_retirados'] ?></td>
-				</tr>
-			</tbody>
-		</table>
-
-		<h2>Roteadores</h2>
-		<table>
-			<thead>
-				<tr>
-					<th>Roteadores comprados</th>
-					<th>Roteadores reutilizados</th>
-					<th>Roteadores retirados</th>
-				</tr>
-			</thead>
-
-			<tbody>
-				<tr>
+					<th scope="row">Roteadores</th>
 					<td><?= $summary['router_comprados'] ?></td>
 					<td><?= $summary['router_reutilizados'] ?></td>
 					<td><?= $summary['router_retirados'] ?></td>
 				</tr>
-			</tbody>
-		</table>
-
-		<h2>ONUs</h2>
-		<table>
-			<thead>
 				<tr>
-					<th>ONUs compradas</th>
-					<th>ONUs reutilizadas</th>
-					<th>ONUs retiradas</th>
-				</tr>
-			</thead>
-
-			<tbody>
-				<tr>
+					<th scope="row">ONUs</th>
 					<td><?= $summary['onu_comprados'] ?></td>
 					<td><?= $summary['onu_reutilizados'] ?></td>
 					<td><?= $summary['onu_retirados'] ?></td>
