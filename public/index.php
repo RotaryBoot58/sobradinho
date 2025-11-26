@@ -17,6 +17,11 @@ function component(string $component): string
 	return "../views/components/{$component}.php";
 }
 
+function view(string $view): string
+{
+	return "../views/{$view}.php";
+}
+
 function redirect(string $route)
 {
 	header("Location: http://localhost:8000/{$route}");
