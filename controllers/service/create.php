@@ -6,11 +6,11 @@ if(!$_POST)
 }
 
 require_once model('service');
+require_once module('validator');
+
 $service_model = new Service;
 
 // Validation
-require_once module('validator');
-
 if(!$_POST['onu'] || !$_POST['onu_usage'])
 {
 	$_POST['onu'] = null;
@@ -40,7 +40,6 @@ if(!$validator->validate())
 {
 	session_start();
 	$_SESSION['services-create_errors'] = $validator->errors;
-	printr($validator->errors);
 	redirect('');
 }
 
