@@ -7,10 +7,13 @@ $method = strtoupper($_SERVER['REQUEST_METHOD']);
 // Routes URI should be in portuguese for readability sake
 $get_routes = [
 	'' => '../controllers/home.php',
+
+	'service/update' => '../views/service/update.php'
 ];
 
 $post_routes = [
 	'service/create' => '../controllers/service/create.php',
+	'service/update' => '../controllers/service/update.php'
 ];
 
 switch($method)
