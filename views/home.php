@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
 <head>
 	<meta charset="UTF-8">
@@ -32,7 +32,7 @@
 
 				<label>
 					Técnico:
-					<input type="text" name="technic" required  autocomplete="off">
+					<input type="text" name="technic" required	autocomplete="off">
 				</label>
 			</fieldset>
 
@@ -79,8 +79,11 @@
 
 		<section id="error-box">
 			<?php
-				printr($_SESSION['services-create_errors']);
-				session_destroy(); 
+				if($_SESSION['services-create_errors'])
+				{
+					printr($_SESSION['services-create_errors']);
+					session_destroy();
+				}
 			?>
 		</section>
 		
@@ -123,6 +126,7 @@
 					<th scope="col">Roteador - Uso</th>
 					<th scope="col">Cabo</th>
 					<th scope="col">Data de abertura</th>
+					<th scope="col">Opçôes</th>
 				</tr>
 			</thead>
 
@@ -139,6 +143,9 @@
 								<td>$service[router] - $service[router_usage]</td>
 								<td>$service[cable]</td>
 								<td>$service[creation_time] - $service[creation_date]</td>
+								<td>
+									<a href="/service/update?id=$service[id]">Editar</a>
+								</td>
 							</tr>
 						ITEM;
 					}
