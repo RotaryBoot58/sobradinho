@@ -1,39 +1,16 @@
 <?php
 
+require '../utilities.php';
 require '../router.php';
 
-function module(string $module): string
-{
-	return "../{$module}.php";
-}
+$router = new Router();
 
-function model(string $model): string
-{
-	return "../models/{$model}.php";
-}
+$router->get('/services', 'Service', 'index');
+$router->get('/service/create', 'Service', 'viewCreate');
+$router->get('/service/update', 'Service', 'viewUpdate');
 
-function component(string $component): string
-{
-	return "../views/components/{$component}.php";
-}
+$router->post('/service/create', 'Service', 'create');
+$router->post('/service/update', 'Service', 'update');
+$router->post('/service/delete', 'Service', 'delete');
 
-function view(string $view): string
-{
-	return "../views/{$view}.php";
-}
-
-function redirect(string $route)
-{
-	header("Location: http://localhost:8000/{$route}");
-	exit();
-}
-
-function printr(...$array)
-{
-	echo "<pre>";
-	foreach($array as $item)
-	{
-		print_r($item);
-	}
-	echo "</pre>";
-}
+$router->route();
