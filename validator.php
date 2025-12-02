@@ -41,8 +41,7 @@ class Validator
 						break;
 						
 					case 'text':
-						$pt = 'áÁàÀâÂãÃéÉêÊíÍóÓôÔõÕúÚ';
-						if(!preg_match('/^[a-zA-Z'. $pt .'\s]+$/u', $value))
+						if(!preg_match("/^[a-zA-ZáÁàÀâÂãÃéÉêÊíÍóÓôÔõÕúÚçÇ\s]+$/u", $value))
 						{
 							$this->addError($field, "O campo não deve conter números ou caracteres especiais");
 						}
@@ -113,8 +112,7 @@ class Validator
 
 	private function checkExistence(mixed $value, string $rule_parameter, string $field)
 	{
-		require_once model($rule_paramter);
-		$model = new $rule_parameter;
+		require_once model('model');
 
 		if(!$model->checkExistence($value))
 		{
