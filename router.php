@@ -1,47 +1,54 @@
 <?php
 
-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$uri = trim($uri, '/');
-$method = strtoupper($_SERVER['REQUEST_METHOD']);
-
-// Routes URI should be in portuguese for readability sake
-$get_routes = [
-	'' => '../controllers/home.php',
-
-	'service/update' => '../views/service/update.php'
-];
-
-$post_routes = [
-	'service/create' => '../controllers/service/create.php',
-	'service/update' => '../controllers/service/update.php'
-];
-
-switch($method)
+class Router
 {
-	case 'GET':
-		$routes = $get_routes;
-		break;
+	private array $get_routes;
+	private array $post_routes;
 
-	case 'POST':
-		$routes = $post_routes;
-		break;
-
-	default:
-		abort(405, 'Request method is not supported');
-}
-
-foreach($routes as $route => $action)
-{
-	if($route === $uri)
+	public function get(string $path, string $class, string $method): void
 	{
-		return require $action;
+		$this->get_routes[$path]['class'] = $class;
+		$this->get_routes[$path]['method'] = $method;
 	}
-}
 
-abort(404, 'Page not found');
+	public function post(string $path, string $class, string $method): void
+	{
+		$this->post_routes[$path]['class'] = $class;
+		$this->post_routes[$path]['method'] = $method;
+	}
 
-function abort(int $code, string $message)
-{
-	http_response_code($code);
-	exit($message);
+	public function route()
+	{
+		$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+		$uri = rtrim($uri, '/');
+		$method = strtolower($_SERVER['REQUEST_METHOD']);
+
+		$routes = match($method)
+		{
+			'get' => $this->get_routes,
+			'post' => $this->post_routes,
+			default => $this->abort(405, 'Method not supported.')
+		};
+
+		foreach($routes as $path => $columns)
+		{
+			if($path === $uri)
+			{
+				require 'controllers/' . $columns['class'] . ".php";
+				
+				$class = new $columns['class'];
+				$tmp = $columns['method'];
+				return $class->$tmp();
+				// call_user_func([$class, $columns['method']]);
+			}
+		}
+
+		$this->abort(404, 'Page not found.');
+	}
+
+	private function abort(int $code, string $message): void
+	{
+		http_response_code($code);
+		exit($message);
+	}
 }
