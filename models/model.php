@@ -1,66 +1,100 @@
 <?php
 
-require_once module('database');
-
-abstract class Model
+class Model
 {
-	protected Database $database;
-	protected string $table_name;
+	private string $table;
+	private PDO $database;
+	private string $error;
 
-	abstract public function create(array $data): bool;
-
-	public function __construct(string $table_name)
+	public function __construct(string $table)
 	{
-		$this->database = new Database();
-		$this->table_name = $table_name;
+		$this->table = $table;
+		$this->database = new PDO('sqlite:../database.sqlite');
+		$this->database->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_NUM);
 	}
 
 	public function index(array $fields = ['*']): array
 	{
 		$fields = implode(', ', $fields);
-		return $this->database->query("SELECT {$fields} FROM {$this->table_name}")->fetchAll();
+		
+		return $this->database->query("SELECT {$fields} FROM {$this->table}")->fetchAll();
 	}
 
-	public function query(array $fields = ['*']): array
+	public function create(array $data): bool
 	{
-		$fields = implode(', ', $fields);
-		return $this->database->query("SELECT {$fields} FROM {$this->table_name}")->fetch();
-	}
+		$data['creation_date'] = date('Y-m-d');
+		$data['creation_time'] = date('H:i');
+		$data['update_date'] = date('Y-m-d');
+		$data['update_time'] = date('H:i');
+		$fields = array_keys($data);
 
-	public function update(int $id, array $data)
-	{
-		$fields = [];
-		$values = [];
-		foreach($data as $key => $value)
+		$columns = implode(', ', $fields);
+		$placeholders = ':' . implode(', :', $fields);
+		
+		$sql = "INSERT INTO {$this->table} ($columns) VALUES ($placeholders)";
+
+		try
 		{
-			$fields[] = "$key = :$key";
-			$values[$key] = $value;
+			$statement = $this->database->prepare($sql);
+			$statement->execute($data);
 		}
-	
-		$values['id'] = $id;
-		$fields = implode(', ',$fields);
+		catch(PDOexception $exception)
+		{
+			$this->error = $exception->getMessage();
+			return false;
+		}
 
-		$this->database->execute("UPDATE {$this->table_name} SET {$fields} WHERE id = :id", $values);
+		return true;
 	}
 
-	public function read(array $fields = ['*'], int $id): array|false
+	public function read(int $id, array $fields = ['*']): array|false
 	{
 		$fields = implode(', ', $fields);
-		return $this->database->query("SELECT {$fields} FROM {$this->table_name} WHERE id = :id", ['id' => $id])->fetch();
+
+		try
+		{
+			$statement = $database->prepare("SELECT {$fields} FROM {$table} WHERE id = ?");
+			$statement->execute($id);
+		}
+		catch(PDOexception $exception)
+		{
+			$this->error = $exception->getMessage();
+			return false;
+		}
+		
+		return $statement->fetch();
 	}
+
+	public function update()
+	{}
 
 	public function delete(int $id): bool
 	{
-		return $this->database->execute("DELETE FROM {$this->table_name} WHERE id = :id", ['id' => $id]);
+		try
+		{
+			$statement = $this->database->prepare("DELETE FROM {$this->table} WHERE id = ?");
+			$statement->execute([$id]);
+		}
+		catch(PDOexception $exception)
+		{
+			$this->error = $exception->getMessage();
+			return false;
+		}
+
+		if($statement->rowCount() === 0)
+		{
+			$this->error = 'Nothing to delete.';
+			return false;
+		}
+
+		return true;
 	}
 
-	public function checkExistence(int $id): bool
+	public function query(string $query, array $parameters = [])
 	{
-		$query = "SELECT EXISTS(SELECT 1 FROM {$this->table_name} WHERE id = :id)";
+		$statement = $this->database->prepare($query);
+		$statement->execute($parameters);
 
-		$item = $this->database->query($query, ['id' => $id])->fetch();
-		$item = array_values($item)[0];
-
-		return $item > 0 ? true : false;
+		return $statement;
 	}
-}
+tu }
