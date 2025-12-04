@@ -1,17 +1,19 @@
 <?php
 
-require_once module('database');
+require_once 'database.php';
 
 class Validator
 {
 	public array $errors;
 	private array $rules;
 	private array $data;
+	private array $messages;
 
 	public function __construct(array $data, array $rules)
 	{
 		$this->data = $data;
 		$this->rules = $rules;
+		$this->messages = require 'enums/validation_messages.php';
 	}
 
 	public function validate(): bool
@@ -25,102 +27,77 @@ class Validator
 				continue;
 			}
 
-			foreach($rules as $rule)
-			{
-				$rule_parts = explode(':', $rule); 
-				$rule_name = $rule_parts[0];
-				$rule_parameter = $rule_parts[1] ?? null;
-
-				switch($rule_name)
-				{
-					case 'required':
-						if($value === NULL || empty($value))
-						{
-							$this->addError($field, "O campo é obrigatório");
-						}
-						break;
-						
-					case 'text':
-						if(!preg_match("/^[a-zA-ZáÁàÀâÂãÃéÉêÊíÍóÓôÔõÕúÚçÇ\s]+$/u", $value))
-						{
-							$this->addError($field, "O campo não deve conter números ou caracteres especiais");
-						}
-						break;
-
-					case 'alpha_numerical':
-						if(!ctype_alnum($value))
-						{
-							$this->addError($field, 'O campo só deve conter números e letras');
-						}
-						break;
-
-					case 'number':
-						if(!ctype_digit($value))
-						{
-							$this->addError($field, 'O campo só deve conter números');
-						}
-						break;
-
-					case 'min':
-						if(!strlen($value) >= $rule_parameter)
-						{
-							$this->addError($field, "O campo deve conter ao menos {$rule_parameter} caracteres");
-						}
-						break;
-
-					case 'max':
-						if(!strlen($value) <= $rule_parameter)
-						{
-							$this->addError($field, "O campo deve conter no máximo {$rule_parameter} caracteres");
-						}
-						break;
-
-					case 'size':
-						if(!strlen($value) === $rule_parameter)
-						{
-							$this->addError($field, "O campo deve conter exatamente {$rule_parameter} caracteres");
-						}
-						break;
-
-					case 'email':
-						if(!filter_var($value, FILTER_VALIDATE_EMAIL))
-						{
-							$this->addError($field, 'O campo deve ser um email válido');
-						}
-						break;
-
-					case 'exists':
-						if(empty($this->errors))
-						{
-							$this->checkExistence($value, $rule_parameter, $field);
-						}
-						break;
-
-					case 'in_array':
-						$list = require_once module("enums/service-type");
-						if(!in_array($value, $list))
-						{
-							$this->addError($field, 'O campo não tem um valor válido');
-						}
-						break;
-				}
-			}
+			$this->validateRules($field, $rules, $value);
 		}
 
 		return empty($this->errors);
 	}
 
-	private function checkExistence(mixed $value, string $rule_parameter, string $field)
+	private function validateRules(string $field, array $rules, mixed $value): void
 	{
-		require_once model('model');
-
-		if(!$model->checkExistence($value))
+		foreach($rules as $rule)
 		{
-			$this->addError($field, "O item não existe no banco de dados");
+			$rule_parts = explode(':', $rule); 
+			$parameter = $rule_parts[1] ?? null;
+
+			switch($rule_parts[0])
+			{
+				case 'required':
+					empty($value) && $this->addError($field, $this->messages['required']);
+					break;
+					
+				case 'text':
+					preg_match("/^[a-zA-ZáÁàÀâÂãÃéÉêÊíÍóÓôÔõÕúÚçÇ\s]+$/u", $value) || $this->addError($field, $this->messages['text']);
+					break;
+
+				case 'alpha_numerical':
+					ctype_alnum($value) || $this->addError($field, $this->messages['alpha_numerical']);
+					break;
+
+				case 'number':
+					ctype_digit($value) || $this->addError($field, $this->messages['number']);
+					break;
+
+				case 'min':
+					strlen($value) < $parameter && $this->addError($field, "O campo deve conter ao menos {$parameter} caracteres");
+					break;
+
+				case 'max':
+					strlen($value) > $parameter && $this->addError($field, "O campo deve conter no máximo {$parameter} caracteres");
+					break;
+
+				case 'size':
+					strlen($value) !== $parameter && $this->addError($field, "O campo deve conter exatamente {$parameter} caracteres");
+					break;
+
+				case 'email':
+					filter_var($value, FILTER_VALIDATE_EMAIL) || $this->addError($field, $this->messages['email']);
+					break;
+
+				case 'exists':
+					if(empty($this->errors))
+					{
+						require_once 'models/model.php';
+						$model = new Model('services');
+
+						$model->checkExistence($value) || $this->addError($field, $this->messages['exists']);
+					}
+					break;
+
+				case 'in_array':
+					$types = require_once "enums/{$parameter}.php";
+
+					in_array($value, $types) || $this->addError($field, $this->messages['in_array']);
+					break;
+
+				case 'required_with':
+					empty($this->data[$parameter]) && $this->addError($field, "O campo precisa que o campo $field esteja preenchido.");
+					break;
+			}
 		}
 	}
 
-	public function addError(string $field, string $message)
+	private function addError(string $field, string $message)
 	{
 		$this->errors[$field][] = $message;
 	}
