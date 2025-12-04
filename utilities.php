@@ -20,8 +20,14 @@ function view(string $view): string
 	return "../views/{$view}.php";
 }
 
-function redirect(string $route)
+function redirect(string $route, string $data_name = null, array $data = null)
 {
+	if($data)
+	{
+		session_start();
+		$_SESSION[$data_name] = $data;
+	}
+	
 	header("Location: http://localhost:8000/{$route}");
 	exit();
 }
