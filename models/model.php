@@ -4,7 +4,7 @@ class Model
 {
 	private string $table;
 	private PDO $database;
-	private string $error;
+	public string $error;
 
 	public function __construct(string $table)
 	{
@@ -65,8 +65,39 @@ class Model
 		return $statement->fetch();
 	}
 
-	public function update()
-	{}
+	public function update(array $data): bool
+	{
+		$data['update_date'] = date('Y-m-d');
+		$data['update_time'] = date('H:i');
+		
+		$fields = null;
+		$first = true;
+		foreach($data as $field => $value)
+		{
+			if($field === 'id')
+			{
+				continue;
+			}
+			
+			$first || $fields .= ', ';
+
+			$fields .= "$field = :$field";
+			$first = false;
+		}
+
+		try
+		{
+			$statement = $this->database->prepare("UPDATE {$this->table} SET {$fields} WHERE id = :id");
+			$statement->execute($data);
+		}
+		catch(PDOexception $exception)
+		{
+			$this->error = $exception->getMessage();
+			return false;
+		}
+		
+		return true;
+	}
 
 	public function delete(int $id): bool
 	{
@@ -97,4 +128,4 @@ class Model
 
 		return $statement;
 	}
-tu }
+}
