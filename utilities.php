@@ -32,6 +32,11 @@ function redirect(string $route, string $data_name = null, array $data = null)
 	exit();
 }
 
+function redirectErrorPage(int $code)
+{
+	return require "../views/{$code}.php";
+}
+
 function printr(...$array)
 {
 	echo "<pre>";
