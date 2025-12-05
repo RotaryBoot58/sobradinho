@@ -14,32 +14,23 @@ class Service
 
 	public function index()
 	{
-		$allowed_filters = ['type', 'technic'];
+		$filters = ['type', 'technic'];
+		$data = [];
 
-		$first = true;
-		foreach($allowed_filters as $filter)
+		foreach($filters as $filter)
 		{
-			$first || $fields .= ' AND ';
-
-			$_GET[$filter] && $fields .= "$filter = :$filter";
-
-			$first = false;
-			
-			$data[$filter] = $_GET[$filter];
+			empty($_GET[$filter]) || $data[$filter] = $_GET[$filter];
 		}
 
 		if($_GET['start_date'] && $_GET['end_date'])
 		{
-			$fields .= " AND creation_date BETWEEN :start_date AND :end_date";
 			$data['start_date'] = $_GET['start_date'];
 			$data['end_date'] = $_GET['end_date'];
 		}
 
-		empty($data) && $services = $this->model->index();
+		empty($data) || $services = $this->model->index();
+		$services = $this->model->index(['*'], $data);
 
-		$sql = 'SELECT * FROM services WHERE {$fields}';
-		$services = $this->model->query($sql, $fields);
-		
 		require view('service/index');
 	}
 
