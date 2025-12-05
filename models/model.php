@@ -26,16 +26,19 @@ class Model
 		$data['creation_time'] = date('H:i');
 		$data['update_date'] = date('Y-m-d');
 		$data['update_time'] = date('H:i');
-		$fields = array_keys($data);
 
-		$columns = implode(', ', $fields);
-		$placeholders = ':' . implode(', :', $fields);
-		
-		$sql = "INSERT INTO {$this->table} ($columns) VALUES ($placeholders)";
+		$first = true;
+		foreach($data as $field => $value)
+		{
+			$first || $fields .= ', ';
+
+			$fields .= "$field = :$field";
+			$first = false;
+		}
 
 		try
 		{
-			$statement = $this->database->prepare($sql);
+			$statement = $this->database->prepare("INSERT INTO {$this->table} ($columns) VALUES ($placeholders)");
 			$statement->execute($data);
 		}
 		catch(PDOexception $exception)
@@ -70,14 +73,10 @@ class Model
 		$data['update_date'] = date('Y-m-d');
 		$data['update_time'] = date('H:i');
 		
-		$fields = null;
 		$first = true;
 		foreach($data as $field => $value)
 		{
-			if($field === 'id')
-			{
-				continue;
-			}
+			if($field === 'id') continue;
 			
 			$first || $fields .= ', ';
 
@@ -103,8 +102,7 @@ class Model
 	{
 		try
 		{
-			$statement = $this->database->prepare("DELETE FROM {$this->table} WHERE id = ?");
-			$statement->execute([$id]);
+			$statement = $this->database->query("DELETE FROM {$this->table} WHERE id = {$id}");
 		}
 		catch(PDOexception $exception)
 		{
@@ -114,7 +112,7 @@ class Model
 
 		if($statement->rowCount() === 0)
 		{
-			$this->error = 'Nothing to delete.';
+			$this->error = 'Nada foi apagado. O item desejado não existe.';
 			return false;
 		}
 
