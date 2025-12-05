@@ -13,11 +13,39 @@ class Model
 		$this->database->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_NUM);
 	}
 
-	public function index(array $fields = ['*']): array
+	public function index(array $fields = ['*'], array $parameters = []): array|false
 	{
 		$fields = implode(', ', $fields);
-		
-		return $this->database->query("SELECT {$fields} FROM {$this->table}")->fetchAll();
+		$sql = "SELECT {$fields} FROM {$this->table}";
+
+		if(!empty($parameters))
+		{
+			$additional_sql = '';
+			$first = true;
+			foreach($parameters as $field => $value)
+			{
+				$first || $additional_sql .= ' AND ';
+
+				$additional_sql .= "$field = :$field";
+
+				$first = false;
+			}
+
+			$sql .= " WHERE {$additional_sql}";
+		}
+
+		try
+		{
+			$statement = $this->database->prepare($sql);
+			$statement->execute($parameters);
+		}
+		catch(PDOexception $exception)
+		{
+			$this->error = $exception->getMessage();
+			return false;
+		}
+
+		return $statement->fetchAll();
 	}
 
 	public function create(array $data): bool
@@ -117,13 +145,5 @@ class Model
 		}
 
 		return true;
-	}
-
-	public function query(string $query, array $parameters = [])
-	{
-		$statement = $this->database->prepare($query);
-		$statement->execute($parameters);
-
-		return $statement;
 	}
 }
