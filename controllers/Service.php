@@ -28,9 +28,9 @@ class Service
 			$data['end_date'] = $_GET['end_date'];
 		}
 
-		empty($data) || $services = $this->model->index();
+		empty($data) && $services = $this->model->index();
 		$services = $this->model->index(['*'], $data);
-
+		
 		require view('service/index');
 	}
 
@@ -59,7 +59,16 @@ class Service
 	}
 
 	public function read()
-	{}
+	{
+		$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+		$id || redirectErrorPage(422);
+		
+		$service = $this->model->read($id);
+		// This must be implemented
+		// $service || redirect
+
+		require view('service/update');
+	}
 
 	public function update()
 	{
@@ -105,10 +114,5 @@ class Service
 	public function viewCreate()
 	{
 		require view('service/create');
-	}
-
-	public function viewUpdate()
-	{
-		
 	}
 }
