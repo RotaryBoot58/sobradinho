@@ -88,7 +88,6 @@
 							</tr>
 						HTML;
 					}
-					unset($service);
 				?>
 			</tbody>
 		</table>
