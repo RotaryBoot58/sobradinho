@@ -17,21 +17,29 @@ class Model
 	{
 		$fields = implode(', ', $fields);
 		$sql = "SELECT {$fields} FROM {$this->table}";
-
-		if(!empty($parameters))
+		
+		$sql_parameters = '';
+		foreach($parameters as $field => $value)
 		{
-			$additional_sql = '';
-			$first = true;
-			foreach($parameters as $field => $value)
+			switch($field)
 			{
-				$first || $additional_sql .= ' AND ';
+				case 'start_date':
+					$sql_parameters .= " creation_date >= :$field AND";
+					break;
 
-				$additional_sql .= "$field = :$field";
+				case 'end_date':
+					$sql_parameters .= " creation_date <= :$field AND";
+					break;
 
-				$first = false;
+				default:
+					$sql_parameters .= " $field = :$field AND";
 			}
+		}
 
-			$sql .= " WHERE {$additional_sql}";
+		if(!empty($sql_parameters))
+		{
+			$sql_parameters = rtrim($sql_parameters, 'AND');
+			$sql .= " WHERE {$sql_parameters}";
 		}
 
 		try
@@ -84,8 +92,8 @@ class Model
 
 		try
 		{
-			$statement = $database->prepare("SELECT {$fields} FROM {$table} WHERE id = ?");
-			$statement->execute($id);
+			$statement = $this->database->prepare("SELECT {$fields} FROM {$this->table} WHERE id = ?");
+			$statement->execute([$id]);
 		}
 		catch(PDOexception $exception)
 		{
