@@ -7,86 +7,69 @@
 	<title>Sobradinho | Criar serviço</title>
 </head>
 <body>
+	<aside>
+		<?php require component('components/nav.html', NO_EXT); ?>
+		
+		<?php
+			session_start();
+			isset($_SESSION['success']) && renderSuccessBox($_SESSION['success']);
+			isset($_SESSION['error']) && renderErrorBox($_SESSION['error']);
+			session_destroy();
+		?>
+	</aside>
+
 	<main>
 		<h1>Criar serviço</h1>
 		
 		<form method="POST" action="/service/create">
+			<label for="code">Código:</label>
+			<input type="number" name="code" id="code" min="0" autocomplete="off" required>
+
+			<label for="type">Tipo:</label>
+			<select name="type" id="type" required>
+				<option value="">Selecionar tipo</option>
+				<option value="Instalação">Instalação</option>
+				<option value="Manutenção">Manutenção</option>
+				<option value="Retirada">Retirada</option>
+				<option value="Upgrade">Upgrade</option>
+				<option value="Troca de endereço">Troca de endereço</option>
+			</select>
+
+			<label for="technic">Técnico:</label>
+			<select name="technic" id="technic" required>
+				<option value="">Selecionar técnico</option>
+				<option value="Marcelo">Marcelo</option>
+				<option value="Rudnei">Rudnei</option>
+			</select>
+
 			<fieldset>
-				<legend>Detalhes</legend>
+				<legend>Equipamento</legend>
 				
-				<label>
-					Código
-					<input type="number" name="code" autocomplete="off" required>
-				</label>
+				<label for="onu">Roteador utilizado:</label>
+				<input type="text" name="onu" id="onu" autocomplete="off">
 
-				<label>
-					Tipo
-					<select name="type" required>
-						<option value="">Selecionar tipo</option>
-						<option value="Instalação">Instalação</option>
-						<option value="Manutenção">Manutenção</option>
-						<option value="Retirada">Retirada</option>
-						<option value="Upgrade">Upgrade</option>
-						<option value="Troca de endereço">Troca de endereço</option>
-					</select>
-				</label>
+				<label for="onu_usage">Uso do roteador:</label>
+				<select name="onu_usage" id="onu_usage">
+					<option value="">Selecionar uso</option>
+					<option value="Retirada">Retirada</option>
+					<option value="Novo">Novo</option>
+					<option value="Reutilizado">Reutilizado</option>
+				</select>
 
-				<label>
-					Técnico
-					<input type="text" name="technic" autocomplete="off" required>
-				</label>
-			</fieldset>
+				<label for="router">ONU utilizada:</label>
+				<input type="text" name="router" id="router" autocomplete="off">
 
-			<h2>Equipamento</h2>
-			<fieldset>
-				<legend>ONU</legend>
-
-				<label>
-					Modelo
-					<input type="text" name="onu" autocomplete="off">
-				</label>
-
-				<label>
-					Uso
-					<select name="onu_usage">
-						<option value="">Selecionar uso</option>
-						<option value="Retirada">Retirada</option>
-						<option value="Novo">Novo</option>
-						<option value="Reutilizado">Reutilizado</option>
-					</select>
-				</label>
-			</fieldset>
-
-			<fieldset>
-				<legend>Roteador</legend>
-
-				<label>
-					Modelo
-					<input type="text" name="router" autocomplete="off">
-				</label>
-
-				<label>
-					Uso
-					<select name="router_usage">
-						<option value="">Selecionar uso</option>
-						<option value="Retirada">Retirada</option>
-						<option value="Novo">Novo</option>
-						<option value="Reutilizado">Reutilizado</option>
-					</select>
-				</label>
+				<label for="router_usage">Uso da ONU:</label>
+				<select name="router_usage" id="router_usage">
+					<option value="">Selecionar uso</option>
+					<option value="Retirada">Retirada</option>
+					<option value="Novo">Novo</option>
+					<option value="Reutilizado">Reutilizado</option>
+				</select>
 			</fieldset>
 
 			<button type="submit">Criar</button>
 		</form>
-
-		<section id="error-box">
-			<?php
-				session_start();
-				isset($_SESSION['success']) && renderSuccessBox($_SESSION['success']);
-				isset($_SESSION['error']) && renderErrorBox($_SESSION['error']);
-				session_destroy();
-			?>
-		</section>
 	</main>
 </body>
 </html>
