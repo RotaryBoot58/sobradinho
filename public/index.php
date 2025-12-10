@@ -7,6 +7,7 @@ $router = new Router();
 
 $router->get('/services', 'Service', 'index');
 $router->get('/service/create', 'Service', 'viewCreate');
+$router->get('/service/read', 'Service', 'read');
 $router->get('/service/update', 'Service', 'viewUpdate');
 
 $router->post('/service/create', 'Service', 'create');
