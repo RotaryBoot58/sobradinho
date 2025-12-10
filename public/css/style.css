@@ -1,10 +1,29 @@
-body {
+body
+{
     margin: unset;
+    display: grid;
+    grid-template-columns: 320px 1024px 320px;
+    justify-content: space-evenly;
 
+    h1, h2
+    {
+    	text-align: center;
+    }
 }
 
-nav {
-    background-color: rgb(10, 132, 240);    
+aside h1, aside h2
+{
+	text-align: left;
 }
 
+table
+{
+	border-collapse: collapse;
+	margin: auto;
 
+	td, th
+	{
+		border: 2px solid black;
+		padding: 8px;
+	}
+}
