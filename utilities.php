@@ -1,5 +1,7 @@
 <?php
 
+const NO_EXT = 1;
+
 function module(string $module): string
 {
 	return "../{$module}.php";
@@ -10,13 +12,23 @@ function model(string $model): string
 	return "../models/{$model}.php";
 }
 
-function component(string $component): string
+function component(string $component, int $flags = 0): string
 {
-	return "../views/components/{$component}.php";
+	if($flags & NO_EXT)
+	{
+		return "../views/{$component}";
+	}
+
+	return "../views/{$component}.php";
 }
 
-function view(string $view): string
+function view(string $view, int $flags = 0): string
 {
+	if($flags & NO_EXT)
+	{
+		return "../views/{$view}";
+	}
+
 	return "../views/{$view}.php";
 }
 
@@ -27,7 +39,7 @@ function redirect(string $route, string $data_name = null, array $data = null)
 		session_start();
 		$_SESSION[$data_name] = $data;
 	}
-	
+
 	header("Location: http://localhost:8000/{$route}");
 	exit();
 }
@@ -50,10 +62,10 @@ function printr(...$array)
 
 function renderSuccessBox($item)
 {
-	printr($item);
+	return require view('components/success_box');
 }
 
 function renderErrorBox($item)
 {
-	printr($item);
+	return require view('components/error_box');
 }
