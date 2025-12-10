@@ -30,7 +30,7 @@ class Service
 
 		$services = $this->model->index(['*'], $data);
 		
-		require view('service/index');
+		return require view('service/index');
 	}
 
 
