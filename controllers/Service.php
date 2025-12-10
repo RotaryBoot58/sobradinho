@@ -28,7 +28,6 @@ class Service
 			$data['end_date'] = $_GET['end_date'];
 		}
 
-		empty($data) && $services = $this->model->index();
 		$services = $this->model->index(['*'], $data);
 		
 		require view('service/index');
@@ -54,28 +53,32 @@ class Service
 
 		$validator->validate() || redirect('service/create', 'error', $validator->errors);
 
+		empty($_POST['onu']) && $_POST['onu'] = '';
+		empty($_POST['onu_usage']) && $_POST['onu_usage'] = '';
+		empty($_POST['router']) && $_POST['router'] = '';
+		empty($_POST['router_usage']) && $_POST['router_usage'] = '';
+		
 		$this->model->create($_POST) || redirect('service/create', 'error', ['O banco de dados falhou em registrar o serviço.']);
 		redirect('service/create', 'success', ['Serviço criado com sucesso.']);
 	}
 
 	public function read()
 	{
-		$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-		$id || redirectErrorPage(422);
-		
-		$service = $this->model->read($id);
-		// This must be implemented
-		// $service || redirect
+		$_GET['id'] = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+		$_GET['id'] || redirectErrorPage(422);
 
-		require view('service/update');
+		$service = $this->model->read($_GET['id']);
+
+		$service || redirectErrorPage(500);
+		return require view('service/read');
 	}
 
 	public function update()
 	{
 		$_POST || redirectErrorPage(400);
 
-		$id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
-		$id || redirectErrorPage(422);
+		$_POST['id'] = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+		$_POST['id'] || redirectErrorPage(422);
 
 		$rules = [
 			'type' => ['required', 'in_array:service-type'],
@@ -103,16 +106,13 @@ class Service
 		$id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
 		$id || redirectErrorPage(422);
 
-		if(!$this->model->delete($id))
-		{
-			redirectErrorPage(500);
-		}
+		$this->model->delete($id) || redirectErrorPage(500);
 
 		redirect('services', 'success', ['Serviço apagado com sucesso.']);
 	}
 
 	public function viewCreate()
 	{
-		require view('service/create');
+		return require view('service/create');
 	}
 }
