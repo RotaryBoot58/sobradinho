@@ -7,93 +7,18 @@
 	<title>Sobradinho | Início</title>
 </head>
 <body>
+	<aside>
+		<?php require component('components/nav.html', NO_EXT); ?>
+	</aside>
+	
 	<main>
-		<h1>Criar serviço</h1>
-		<form method="POST" action="/service/create">
-			<fieldset>
-				<legend>Detalhes</legend>
-				
-				<label>
-					Código:
-					<input type="number" name="code" required  autocomplete="off">
-				</label>
-
-				<label>
-					Tipo:
-					<select name="type" required>
-						<option value="">Selecionar tipo</option>
-						<option value="Instalação">Instalação</option>
-						<option value="Manutenção">Manutenção</option>
-						<option value="Retirada">Retirada</option>
-						<option value="Upgrade">Upgrade</option>
-						<option value="Troca de endereço">Troca de endereço</option>
-					</select>
-				</label>
-
-				<label>
-					Técnico:
-					<input type="text" name="technic" required	autocomplete="off">
-				</label>
-			</fieldset>
-
-			<fieldset id="a1">
-				<legend>ONU</legend>
-
-				<label>
-					Modelo:
-					<input type="text" name="onu" autocomplete="off">
-				</label>
-
-				<label>
-					Uso:
-					<select name="onu_usage">
-						<option value="">Selecionar uso</option>
-						<option value="Comprado">Comprado</option>
-						<option value="Utilizado">Retirado</option>
-						<option value="Reutilizado">Reutilizado</option>
-					</select>
-				</label>
-			</fieldset>
-
-			<fieldset>
-				<legend>Roteador</legend>
-
-				<label>
-					Modelo:
-					<input type="text" name="router" autocomplete="off">
-				</label>
-
-				<label>
-					Uso:
-					<select name="router_usage">
-						<option value="">Selecionar uso</option>
-						<option value="Comprado">Comprado</option>
-						<option value="Utilizado">Retirado</option>
-						<option value="Reutilizado">Reutilizado</option>
-					</select>
-				</label>
-			</fieldset>
-
-			<button type="submit">Criar</button>
-		</form>
-
-		<section id="error-box">
-			<?php
-				if($_SESSION['services-create_errors'])
-				{
-					printr($_SESSION['services-create_errors']);
-					session_destroy();
-				}
-			?>
-		</section>
-		
-		<h1>Resumo de estoque</h1>
+		<h1>Resumo de equipamentos</h1>
 
 		<table>
 			<thead>
 				<tr>
 					<th scope="col"></th>
-					<th scope="col">Comprados</th>
+					<th scope="col">Novos</th>
 					<th scope="col">Utilizados</th>
 					<th scope="col">Reutilizados</th>
 				</tr>
@@ -102,55 +27,16 @@
 			<tbody>
 				<tr>
 					<th scope="row">Roteadores</th>
-					<td><?= $summary['router_comprados'] ?></td>
-					<td><?= $summary['router_reutilizados'] ?></td>
-					<td><?= $summary['router_retirados'] ?></td>
+					<td><?= $router_summary[0] ?></td>
+					<td><?= $router_summary[1] ?></td>
+					<td><?= $router_summary[2] ?></td>
 				</tr>
 				<tr>
 					<th scope="row">ONUs</th>
-					<td><?= $summary['onu_comprados'] ?></td>
-					<td><?= $summary['onu_reutilizados'] ?></td>
-					<td><?= $summary['onu_retirados'] ?></td>
+					<td><?= $onu_summary[0] ?></td>
+					<td><?= $onu_summary[1] ?></td>
+					<td><?= $onu_summary[2] ?></td>
 				</tr>
-			</tbody>
-		</table>
-
-		<h2>Lista de serviços</h2>
-		<table>
-			<thead>
-				<tr>
-					<th scope="col">Nº</th>
-					<th scope="col">Tipo</th>
-					<th scope="col">Técnico</th>
-					<th scope="col">ONU - Uso</th>
-					<th scope="col">Roteador - Uso</th>
-					<th scope="col">Cabo</th>
-					<th scope="col">Data de abertura</th>
-					<th scope="col">Opçôes</th>
-				</tr>
-			</thead>
-
-			<tbody>
-				<?php
-					foreach($services as $service)
-					{
-						echo <<<ITEM
-							<tr>
-								<td>$service[code]</td>
-								<td>$service[type]</td>
-								<td>$service[technic]</td>
-								<td>$service[onu] - $service[onu_usage]</td>
-								<td>$service[router] - $service[router_usage]</td>
-								<td>$service[cable]</td>
-								<td>$service[creation_time] - $service[creation_date]</td>
-								<td>
-									<a href="/service/update?id=$service[id]">Editar</a>
-								</td>
-							</tr>
-						ITEM;
-					}
-					unset($service);
-				?>
 			</tbody>
 		</table>
 	</main>
