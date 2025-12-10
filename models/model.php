@@ -17,43 +17,41 @@ class Model
 	{
 		$fields = implode(', ', $fields);
 		$sql = "SELECT {$fields} FROM {$this->table}";
-		
-		$sql_parameters = '';
-		foreach($parameters as $field => $value)
+
+		if(empty($parameters))
 		{
-			switch($field)
+			$query = $this->query($sql);
+			return $query ? $query->fetchAll() : false;
+		}
+
+		$bindings = '';
+		$first = true;
+		foreach($parameters as $key => $value)
+		{
+			$first || $bindings .= ' AND ';
+
+			switch($key)
 			{
 				case 'start_date':
-					$sql_parameters .= " creation_date >= :$field AND";
+					$bindings .= "creation_date >= :$key";
 					break;
 
 				case 'end_date':
-					$sql_parameters .= " creation_date <= :$field AND";
+					$bindings .= "creation_date <= :$key";
 					break;
 
 				default:
-					$sql_parameters .= " $field = :$field AND";
+					$bindings .= "$key = :$key";
 			}
+
+			$first = false;
 		}
 
-		if(!empty($sql_parameters))
-		{
-			$sql_parameters = rtrim($sql_parameters, 'AND');
-			$sql .= " WHERE {$sql_parameters}";
-		}
+		$sql .= " WHERE {$bindings}";
 
-		try
-		{
-			$statement = $this->database->prepare($sql);
-			$statement->execute($parameters);
-		}
-		catch(PDOexception $exception)
-		{
-			$this->error = $exception->getMessage();
-			return false;
-		}
+		$query = $this->query($sql, $parameters);
 
-		return $statement->fetchAll();
+		return $query ? $query->fetchAll() : false;
 	}
 
 	public function create(array $data): bool
@@ -64,94 +62,88 @@ class Model
 		$data['update_time'] = date('H:i');
 
 		$first = true;
-		foreach($data as $field => $value)
+		$columns = '';
+		$fields = '';
+		foreach($data as $key => $value)
 		{
-			$first || $fields .= ', ';
+			if(!$first)
+			{
+				$columns .= ', ';
+				$fields .= ', ';
+			}
 
-			$fields .= "$field = :$field";
+			$columns .= "$key";
+			$fields .= ":$key";
+
 			$first = false;
 		}
 
-		try
-		{
-			$statement = $this->database->prepare("INSERT INTO {$this->table} ($columns) VALUES ($placeholders)");
-			$statement->execute($data);
-		}
-		catch(PDOexception $exception)
-		{
-			$this->error = $exception->getMessage();
-			return false;
-		}
+		$sql = "INSERT INTO {$this->table} ($columns) VALUES ($fields)";
+		$query = $this->query($sql, $data);
 
-		return true;
+		return $query ? true : false;
 	}
 
 	public function read(int $id, array $fields = ['*']): array|false
 	{
 		$fields = implode(', ', $fields);
 
-		try
-		{
-			$statement = $this->database->prepare("SELECT {$fields} FROM {$this->table} WHERE id = ?");
-			$statement->execute([$id]);
-		}
-		catch(PDOexception $exception)
-		{
-			$this->error = $exception->getMessage();
-			return false;
-		}
-		
-		return $statement->fetch();
+		$query = $this->query("SELECT {$fields} FROM {$this->table} WHERE id = ?", [$id]);
+
+		return $query ? $query->fetch() : false;
 	}
 
 	public function update(array $data): bool
 	{
 		$data['update_date'] = date('Y-m-d');
 		$data['update_time'] = date('H:i');
-		
+
 		$first = true;
+		$fields = '';
 		foreach($data as $field => $value)
 		{
-			if($field === 'id') continue;
-			
+			if($field === 'id')
+			{
+				continue;
+			}
+
 			$first || $fields .= ', ';
 
 			$fields .= "$field = :$field";
 			$first = false;
 		}
 
-		try
-		{
-			$statement = $this->database->prepare("UPDATE {$this->table} SET {$fields} WHERE id = :id");
-			$statement->execute($data);
-		}
-		catch(PDOexception $exception)
-		{
-			$this->error = $exception->getMessage();
-			return false;
-		}
-		
-		return true;
+		$query = $this->query("UPDATE {$this->table} SET {$fields} WHERE id = :id", $data);
+
+		return $query ? true : false;
 	}
 
 	public function delete(int $id): bool
 	{
-		try
-		{
-			$statement = $this->database->query("DELETE FROM {$this->table} WHERE id = {$id}");
-		}
-		catch(PDOexception $exception)
-		{
-			$this->error = $exception->getMessage();
-			return false;
-		}
+		$query = $this->query("DELETE FROM {$this->table} WHERE id = :id", [$id]);
 
-		if($statement->rowCount() === 0)
+		if($query->rowCount() === 0)
 		{
 			$this->error = 'Nada foi apagado. O item desejado não existe.';
 			return false;
 		}
 
 		return true;
+	}
+
+	public function query(string $query, array $parameters = []): PDOStatement|false
+	{
+		try
+		{
+			$statement = $this->database->prepare($query);
+			$statement->execute($parameters);
+		}
+		catch(PDOexception $exception)
+		{
+			$this->error = $exception->getMessage();
+			return false;
+		}
+
+		return $statement;
 	}
 }
