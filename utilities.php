@@ -34,7 +34,7 @@ function redirect(string $route, string $data_name = null, array $data = null)
 
 function redirectErrorPage(int $code)
 {
-	require "../views/{$code}.php";
+	require "../views/errors/{$code}.php";
 	exit();
 }
 
