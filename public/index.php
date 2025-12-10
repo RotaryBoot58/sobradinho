@@ -5,6 +5,8 @@ require '../router.php';
 
 $router = new Router();
 
+$router->get('', 'Geral', 'index');
+
 $router->get('/services', 'Service', 'index');
 $router->get('/service/create', 'Service', 'viewCreate');
 $router->get('/service/read', 'Service', 'read');
