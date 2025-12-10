@@ -34,7 +34,8 @@ function redirect(string $route, string $data_name = null, array $data = null)
 
 function redirectErrorPage(int $code)
 {
-	return require "../views/{$code}.php";
+	require "../views/{$code}.php";
+	exit();
 }
 
 function printr(...$array)
@@ -45,4 +46,14 @@ function printr(...$array)
 		print_r($item);
 	}
 	echo "</pre>";
+}
+
+function renderSuccessBox($item)
+{
+	printr($item);
+}
+
+function renderErrorBox($item)
+{
+	printr($item);
 }
