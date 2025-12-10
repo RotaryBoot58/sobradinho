@@ -70,8 +70,8 @@
 					{
 						echo <<<HTML
 							<tr>
-								<td>$service[1]</td>
 								<td>$service[2]</td>
+								<td>$service[1]</td>
 								<td>$service[3]</td>
 								<td>$service[4] - $service[5]</td>
 								<td>$service[6] - $service[7]</td>
