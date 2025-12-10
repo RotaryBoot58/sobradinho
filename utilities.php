@@ -62,10 +62,10 @@ function printr(...$array)
 
 function renderSuccessBox($item)
 {
-	return require view('components/success_box');
+	return require '../views/components/success_box.php';
 }
 
 function renderErrorBox($item)
 {
-	return require view('components/error_box');
+	return require '../views/components/error_box.php';
 }
