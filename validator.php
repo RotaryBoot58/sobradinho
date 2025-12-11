@@ -37,7 +37,7 @@ class Validator
 	{
 		foreach($rules as $rule)
 		{
-			$rule_parts = explode(':', $rule); 
+			$rule_parts = explode(':', $rule);
 			$parameter = $rule_parts[1] ?? null;
 
 			switch($rule_parts[0])
@@ -45,17 +45,17 @@ class Validator
 				case 'required':
 					empty($value) && $this->addError($field, $this->messages['required']);
 					break;
-					
+
 				case 'text':
-					preg_match("/^[a-zA-ZáÁàÀâÂãÃéÉêÊíÍóÓôÔõÕúÚçÇ\s]+$/u", $value) || $this->addError($field, $this->messages['text']);
+					preg_match("/^[a-zA-ZáÁàÀâÂãÃéÉêÊíÍóÓôÔõÕúÚçÇ\s',-_\".]+$/u", $value) || $this->addError($field, $this->messages['text']);
 					break;
 
 				case 'alpha_numerical':
-					ctype_alnum($value) || $this->addError($field, $this->messages['alpha_numerical']);
+					preg_match("/^[0-9a-zA-ZáÁàÀâÂãÃéÉêÊíÍóÓôÔõÕúÚçÇ\s',-_\".]+$/u", $value) || $this->addError($field, $this->messages['alpha_numerical']);
 					break;
 
 				case 'number':
-					ctype_digit($value) || $this->addError($field, $this->messages['number']);
+					preg_match("^\d+$/", $value) || $this->addError($field, $this->messages['number']);
 					break;
 
 				case 'min':
