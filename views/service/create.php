@@ -9,17 +9,17 @@
 <body>
 	<aside>
 		<?php require component('nav.html', NO_EXT); ?>
-		
+	</aside>
+
+	<main>
+		<h1>Criar serviço</h1>
+
 		<?php
 			session_start();
 			isset($_SESSION['success']) && renderSuccessBox($_SESSION['success']);
 			isset($_SESSION['error']) && renderErrorBox($_SESSION['error']);
 			session_destroy();
 		?>
-	</aside>
-
-	<main>
-		<h1>Criar serviço</h1>
 		
 		<form method="POST" action="/service/create">
 			<div>

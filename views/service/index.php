@@ -44,6 +44,10 @@
 
 			<button type="submit">Filtrar</button>
 		</form>
+	</aside>
+
+	<main>
+		<h1>Serviços</h1>
 
 		<?php
 			session_start();
@@ -51,10 +55,6 @@
 			isset($_SESSION['error']) && renderErrorBox($_SESSION['error']);
 			session_destroy();
 		?>
-	</aside>
-
-	<main>
-		<h1>Serviços</h1>
 
 		<table>
 			<thead>
