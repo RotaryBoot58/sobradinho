@@ -1,3 +1,13 @@
-422 Unprocessable Content
-
-The HTTP 422 Unprocessable Content client error response status code indicates that the server understood the content type of the request content, and the syntax of the request content was correct, but it was unable to process the contained instructions.
+<!doctype html>
+<html lang="pt-br">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="/css/style.css">
+	<title>Sobradinho | 422</title>
+</head>
+<body>
+	<main>
+		<h1>Erro 422</h1>
+	</main>
+</body>
+</html>

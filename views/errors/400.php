@@ -1,3 +1,13 @@
-Erro 400: Bad Request
-
-Indicates that the server could not understand the request due to invalid syntax. This can occur if the request is malformed.
+<!doctype html>
+<html lang="pt-br">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="/css/style.css">
+	<title>Sobradinho | 400</title>
+</head>
+<body>
+	<main>
+		<h1>Erro 400</h1>
+	</main>
+</body>
+</html>
