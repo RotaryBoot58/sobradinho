@@ -8,7 +8,7 @@
 </head>
 <body>
 	<aside>
-		<?php require component('components/nav.html', NO_EXT); ?>
+		<?php require component('nav.html', NO_EXT); ?>
 
 		<h2>Filtros</h2>
 		<form method="GET" action="/services">

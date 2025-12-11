@@ -16,10 +16,10 @@ function component(string $component, int $flags = 0): string
 {
 	if($flags & NO_EXT)
 	{
-		return "../views/{$component}";
+		return "../views/components/{$component}";
 	}
 
-	return "../views/{$component}.php";
+	return "../views/components/{$component}.php";
 }
 
 function view(string $view, int $flags = 0): string

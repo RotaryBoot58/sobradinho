@@ -8,7 +8,7 @@
 </head>
 <body>
 	<aside>
-		<?php require component('components/nav.html', NO_EXT); ?>
+		<?php require component('nav.html', NO_EXT); ?>
 	</aside>
 	
 	<main>
