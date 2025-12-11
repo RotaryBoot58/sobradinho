@@ -95,7 +95,7 @@ class Service
 
 		$validator->validate() || redirect('service/update', 'error', $validator->errors);
 
-		$this->model->update($id, $_POST) || redirect('service/create', 'error', ['O banco de dados falhou em atualizar o serviço.']);
+		$this->model->update($_POST['id'], $_POST) || redirect('service/create', 'error', ['O banco de dados falhou em atualizar o serviço.']);
 		redirect('service/update', 'success', [$id, 'Serviço atualizado com sucesso.']);
 	}
 
@@ -103,10 +103,10 @@ class Service
 	{
 		$_POST || redirectErrorPage(400);
 
-		$id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
-		$id || redirectErrorPage(422);
+		$_POST['id'] = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+		$_POST['id'] || redirectErrorPage(422);
 
-		$this->model->delete($id) || redirectErrorPage(500);
+		$this->model->delete($_POST['id']) || redirectErrorPage(500);
 
 		redirect('services', 'success', ['Serviço apagado com sucesso.']);
 	}
@@ -114,5 +114,17 @@ class Service
 	public function viewCreate()
 	{
 		return require view('service/create');
+	}
+
+	public function viewUpdate()
+	{
+		$_GET || redirectErrorPage(400);
+
+		$_GET['id'] = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+		$_GET['id'] || redirectErrorPage(422);
+
+		$service = $this->model->read($_GET['id']);
+
+		return require view('service/update');
 	}
 }
