@@ -1,7 +1,5 @@
 <?php
 
-require_once 'database.php';
-
 class Validator
 {
 	public array $errors;
@@ -55,7 +53,7 @@ class Validator
 					break;
 
 				case 'number':
-					preg_match("^\d+$/", $value) || $this->addError($field, $this->messages['number']);
+					preg_match("/^\d+$/", $value) || $this->addError($field, $this->messages['number']);
 					break;
 
 				case 'min':
@@ -77,7 +75,7 @@ class Validator
 				case 'exists':
 					if(empty($this->errors))
 					{
-						require_once 'models/model.php';
+						require_once module('model', MODEL);
 						$model = new Model('services');
 
 						$model->checkExistence($value) || $this->addError($field, $this->messages['exists']);
