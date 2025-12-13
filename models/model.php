@@ -10,7 +10,7 @@ class Model
 	{
 		$this->table = $table;
 		$this->database = new PDO('sqlite:../database.sqlite');
-		$this->database->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_NUM);
+		$this->database->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 	}
 
 	public function index(array $fields = ['*'], array $parameters = []): array|false
