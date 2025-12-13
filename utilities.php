@@ -1,35 +1,41 @@
 <?php
 
-const NO_EXT = 1;
+const MODEL = 1;
+const VIEW = 2;
+const COMPONENT = 4;
+const NO_EXT = 8;
 
-function module(string $module): string
+function module(string $name, int $flag = 0, int $ext_flag = 0): string
 {
-	return "../{$module}.php";
-}
+	$module = '../';
 
-function model(string $model): string
-{
-	return "../models/{$model}.php";
-}
-
-function component(string $component, int $flags = 0): string
-{
-	if($flags & NO_EXT)
+	if($flag & MODEL)
 	{
-		return "../views/components/{$component}";
+		$module .= "models/$name";
+	}
+	elseif($flag & VIEW)
+	{
+		$module .= "views/$name";
+	}
+	elseif($flag & COMPONENT)
+	{
+		$module .= "views/components/$name";
+	}
+	else
+	{
+		$module .= $name;
+	}
+	
+	if($ext_flag & NO_EXT)
+	{
+		$module .= '';
+	}
+	else
+	{
+		$module .= '.php';
 	}
 
-	return "../views/components/{$component}.php";
-}
-
-function view(string $view, int $flags = 0): string
-{
-	if($flags & NO_EXT)
-	{
-		return "../views/{$view}";
-	}
-
-	return "../views/{$view}.php";
+	return $module;
 }
 
 function redirect(string $route, string $data_name = null, array $data = null)
@@ -63,9 +69,13 @@ function printr(...$array)
 function renderSuccessBox($item)
 {
 	return require '../views/components/success_box.php';
+	session_destroy();
+	exit();
 }
 
 function renderErrorBox($item)
 {
 	return require '../views/components/error_box.php';
+	session_destroy();
+	exit();
 }
