@@ -1,7 +1,7 @@
 <?php
 
-require_once '../models/model.php';
-require_once '../validator.php';
+require_once module('model', MODEL);
+require_once module('validator');
 
 class Service
 {
@@ -30,7 +30,7 @@ class Service
 
 		$services = $this->model->index(['*'], $data);
 		
-		return require view('service/index');
+		return require module('service/index', VIEW);
 	}
 
 
@@ -46,11 +46,18 @@ class Service
 			'onu_usage' => ['alpha_numerical', 'required_with:onu'],
 			'router' => ['alpha_numerical', 'required_with:router_usage'],
 			'router_usage' => ['alpha_numerical', 'required_with:router'],
-			'cable' => ['number']
+			'cable' => ['number'],
+			'description' => ['alpha_numerical'],
+			'status' => ['required', 'text', 'in_array:service_status'],
+			'numero' => ['required', 'number'],
+			'rua' => ['required', 'text'],
+			'bairro' => ['required', 'text'],
+			'cidade' => ['required', 'text'],
+			'cep' => ['required', 'number']
 		];
 
 		$validator = new Validator($_POST, $rules);
-
+		
 		$validator->validate() || redirect('service/create', 'error', $validator->errors);
 
 		empty($_POST['onu']) && $_POST['onu'] = '';
@@ -58,7 +65,7 @@ class Service
 		empty($_POST['router']) && $_POST['router'] = '';
 		empty($_POST['router_usage']) && $_POST['router_usage'] = '';
 		
-		$this->model->create($_POST) || redirect('service/create', 'error', ['O banco de dados falhou em registrar o serviço.']);
+		$this->model->create($_POST) || redirect('service/create', 'error', ['database' => $this->model->error]);
 		redirect('service/create', 'success', ['Serviço criado com sucesso.']);
 	}
 
@@ -70,7 +77,7 @@ class Service
 		$service = $this->model->read($_GET['id']);
 
 		$service || redirectErrorPage(500);
-		return require view('service/read');
+		return require module('service/read', VIEW);
 	}
 
 	public function update()
@@ -88,7 +95,14 @@ class Service
 			'onu_usage' => ['alpha_numerical'],
 			'router' => ['alpha_numerical'],
 			'router_usage' => ['alpha_numerical'],
-			'cable' => ['number']
+			'cable' => ['number'],
+			'description' => ['text'],
+			'status' => ['text', 'in_array:service_status'],
+			'numero' => ['number'],
+			'rua' => ['text'],
+			'bairro' => ['text'],
+			'cidade' => ['text'],
+			'cep' => ['number']
 		];
 
 		$validator = new Validator($_POST, $rules);
@@ -113,7 +127,7 @@ class Service
 
 	public function viewCreate()
 	{
-		return require view('service/create');
+		return require module('service/create', VIEW);
 	}
 
 	public function viewUpdate()
@@ -125,6 +139,6 @@ class Service
 
 		$service = $this->model->read($_GET['id']);
 
-		return require view('service/update');
+		return require module('service/update', VIEW);
 	}
 }
