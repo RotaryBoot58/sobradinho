@@ -1,6 +1,6 @@
 <?php
 
-require_once '../models/model.php';
+require_once module('model', MODEL);
 
 class Geral
 {
@@ -20,31 +20,56 @@ class Geral
 		$onu_summary = [0, 0, 0];
 		$cable = 0;
 
+		$servicesOfMonth = [];
 		foreach($services as $service)
 		{
-			// if($service['creation_date'] >= date("1.n.Y") && $service['creation_date'] <= date("t.n.Y"))
-			// {
-			// 	$servicesOfMonth[] = $service;
-			// }
-			empty($service[8]) || $cable + $service[8];
-
-			$router_summary[] = match($service[5])
+			if($service['creation_date'] >= date("1.n.Y") && $service['creation_date'] <= date("t.n.Y"))
 			{
-				'Novo' => $router_summary[0]++,
-				'Reutilizado' =>$router_summary[1]++,
-				'Retirada' =>$router_summary[2]++,
-				default => null,
-			};
-
-			$onu_summary[] = match($service[7])
-			{
-				'Novo' => $onu_summary[0]++,
-				'Reutilizado' =>$onu_summary[1]++,
-				'Retirada' =>$onu_summary[2]++,
-				default => null,
-			};
+				$servicesOfMonth[] = $service;
+			}
 		}
 
-		return require view('home');
+		foreach($servicesOfMonth as $service)
+		{
+			empty($service['cable']) || $cable + $service['cable'];
+
+			switch($service['router_usage'])
+			{
+				case 'Novo':
+					$router_summary[0]++;
+					break;
+
+				case 'Reutilizado':
+					$router_summary[1]++;
+					break;
+
+				case 'Retirada':
+					$router_summary[2]++;
+					break;
+
+				default:
+					break;
+			}
+
+			switch($service['onu_usage'])
+			{
+				case 'Novo':
+					$onu_summary[0]++;
+					break;
+
+				case 'Reutilizado':
+					$onu_summary[1]++;
+					break;
+
+				case 'Retirada':
+					$onu_summary[2]++;
+					break;
+
+				default:
+					break;
+			}
+		}
+
+		return require module('home', VIEW);
 	}
 }
