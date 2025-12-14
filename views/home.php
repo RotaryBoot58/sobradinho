@@ -8,7 +8,7 @@
 </head>
 <body>
 	<aside>
-		<?php require component('nav.html', NO_EXT); ?>
+		<?php require module('nav.html', COMPONENT, NO_EXT); ?>
 	</aside>
 	
 	<main>
@@ -19,8 +19,8 @@
 				<tr>
 					<th scope="col"></th>
 					<th scope="col">Novos</th>
-					<th scope="col">Utilizados</th>
 					<th scope="col">Reutilizados</th>
+					<th scope="col">Retirados</th>
 				</tr>
 			</thead>
 
