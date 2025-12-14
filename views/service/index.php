@@ -8,7 +8,7 @@
 </head>
 <body>
 	<aside>
-		<?php require component('nav.html', NO_EXT); ?>
+		<?php require module('nav.html', COMPONENT, NO_EXT); ?>
 
 		<h2>Filtros</h2>
 		<form method="GET" action="/services">
@@ -62,9 +62,12 @@
 					<th scope="col">Nº</th>
 					<th scope="col">Tipo</th>
 					<th scope="col">Técnico</th>
-					<th scope="col">ONU - Uso</th>
 					<th scope="col">Roteador - Uso</th>
+					<th scope="col">ONU - Uso</th>
 					<th scope="col">Cabo</th>
+					<th scope="col">Status</th>
+					<th scope="col">Endereço</th>
+					<th scope="col">Descrição</th>
 					<th scope="col">Data de abertura</th>
 					<th scope="col">Opções</th>
 				</tr>
@@ -72,17 +75,20 @@
 			<tbody>
 			<?php foreach($services as $service): ?>
 				<tr>
-					<td><?=$service[2]?></td>
-					<td><?=$service[1]?></td>
-					<td><?=$service[3]?></td>
-					<td><?="$service[4] - $service[5]"?></td>
-					<td><?="$service[6] - $service[7]"?></td>
-					<td><?=$service[8]?></td>
-					<td><?="$service[9] - $service[10]"?></td>
+					<td><?=$service['code']?></td>
+					<td><?=$service['type']?></td>
+					<td><?=$service['technic']?></td>
+					<td><?="$service[router] - $service[router_usage]"?></td>
+					<td><?="$service[onu] - $service[onu_usage]"?></td>
+					<td><?=$service['cable']?></td>
+					<td><?=$service['status']?></td>
+					<td><?=$service['rua']?></td>
+					<td><?=$service['description']?></td>
+					<td><?=$service['creation_date']?></td>
 					<td>
-						<a href=<?="/service/update?id=$service[0]"?>>Editar</a>
+						<a href=<?="/service/update?id=$service[id]"?>>Editar</a>
 						<form method="post" action="service/delete">
-							<input type="hidden" name="id" value=<?=$service[0]?>>
+							<input type="hidden" name="id" value=<?=$service['id']?>>
 							<button type="submit">Apagar</button>
 						</form>
 					</td>
