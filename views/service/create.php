@@ -8,7 +8,7 @@
 </head>
 <body>
 	<aside>
-		<?php require component('nav.html', NO_EXT); ?>
+		<?php require module('nav.html', COMPONENT, NO_EXT); ?>
 	</aside>
 
 	<main>
@@ -48,16 +48,39 @@
 				</select>
 			</div>
 
+			<div>
+				<label for="status">Status:</label>
+				<select name="status" id="status" required>
+					<option value="Aberto">Aberto</option>
+					<option value="Finalizado">Finalizado</option>
+				</select>
+			</div>
+
 			<fieldset>
 				<legend>Equipamento</legend>
 
 				<div>
-					<label for="onu">Roteador utilizado:</label>
+					<label for="router">Roteador utilizado:</label>
+					<input type="text" name="router" id="router" autocomplete="off">
+				</div>
+
+				<div>
+					<label for="router_usage">Uso do roteador:</label>
+					<select name="router_usage" id="router_usage">
+						<option value="">Selecionar uso</option>
+						<option value="Retirada">Retirada</option>
+						<option value="Novo">Novo</option>
+						<option value="Reutilizado">Reutilizado</option>
+					</select>
+				</div>
+
+				<div>
+					<label for="onu">ONU utilizada:</label>
 					<input type="text" name="onu" id="onu" autocomplete="off">
 				</div>
 
 				<div>
-					<label for="onu_usage">Uso do roteador:</label>
+					<label for="onu_usage">Uso da ONU:</label>
 					<select name="onu_usage" id="onu_usage">
 						<option value="">Selecionar uso</option>
 						<option value="Retirada">Retirada</option>
@@ -67,24 +90,43 @@
 				</div>
 
 				<div>
-					<label for="router">ONU utilizada:</label>
-					<input type="text" name="router" id="router" autocomplete="off">
+					<label for="cable">Cabo:</label>
+					<input type="number" name="cable" id="cable" autocomplete="off">
+				</div>
+			</fieldset>
+
+			<fieldset>
+				<legend>Endereço</legend>
+
+				<div>
+					<label for="numero">Número da casa:</label>
+					<input type="number" name="numero" id="numero" autocomplete="off">
 				</div>
 
 				<div>
-					<label for="router_usage">Uso da ONU:</label>
-					<select name="router_usage" id="router_usage">
-						<option value="">Selecionar uso</option>
-						<option value="Retirada">Retirada</option>
-						<option value="Novo">Novo</option>
-						<option value="Reutilizado">Reutilizado</option>
-					</select>
+					<label for="rua">Rua:</label>
+					<input type="text" name="rua" id="rua" autocomplete="off">
+				</div>
+
+				<div>
+					<label for="bairro">Bairro:</label>
+					<input type="text" name="bairro" id="bairro" autocomplete="off">
+				</div>
+
+				<div>
+					<label for="cidade">Cidade:</label>
+					<input type="text" name="cidade" id="cidade" autocomplete="off">
+				</div>
+
+				<div>
+					<label for="CEP">CEP:</label>
+					<input type="number" name="cep" id="cep" autocomplete="off">
 				</div>
 			</fieldset>
 
 			<div id="textarea">
-				<label>Descrição</label>
-				<textarea rows=10 autocomplete="off"></textarea>
+				<label for="description">Descrição</label>
+				<textarea id="description" name="description" rows=10 autocomplete="off"></textarea>
 			</div>
 
 			<button type="submit">Criar</button>
