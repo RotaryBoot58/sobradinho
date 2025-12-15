@@ -21,7 +21,7 @@
 			session_destroy();
 		?>
 
-		<form method="POST" action="/service/create">
+		<form method="POST" action="/service/update">
 			<div>
 				<label for="code">Código:</label>
 				<input type="number" name="code" id="code" min="0" autocomplete="off" placeholder=<?= $service['code'] ?>>
