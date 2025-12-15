@@ -9,7 +9,7 @@ class Model
 	public function __construct(string $table)
 	{
 		$this->table = $table;
-		$this->database = new PDO('sqlite:../database.sqlite');
+		$this->database = new PDO('sqlite:../database.db');
 		$this->database->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 	}
 
