@@ -100,7 +100,7 @@ class Validator
 		$this->errors[$field][] = $message;
 	}
 
-	public function getErrors(string $field = null): array
+	public function getErrors(?string $field = null): array
 	{
 		if($field)
 		{
