@@ -38,7 +38,7 @@ function module(string $name, int $flag = 0, int $ext_flag = 0): string
 	return $module;
 }
 
-function redirect(string $route, string $data_name = null, array $data = null)
+function redirect(string $route, ?string $data_name = null, ?array $data = null)
 {
 	if($data)
 	{
